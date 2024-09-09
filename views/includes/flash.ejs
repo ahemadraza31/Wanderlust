@@ -1,0 +1,73 @@
+<style>
+    /* flash animation */
+    .anima {
+        position: absolute;
+        top: calc(5.5rem);
+        animation: slide-in 3s ease-in forwards;
+        z-index: 110;
+    }
+
+    @keyframes slide-in {
+        0% {
+            top: calc(5.5rem - 90px);
+        }
+
+        25% {
+            top: 5.5rem;
+        }
+
+        75% {
+            top: 5.5rem;
+        }
+
+        100% {
+            top: calc(5.5rem - 190px);
+        }
+    }
+
+    @media (max-width: 767px) {
+        .anima {
+            top: 8rem;
+        }
+
+        @keyframes slide-in {
+            0% {
+                top: calc(8rem - 90px);
+            }
+
+            25% {
+                top: 8rem;
+            }
+
+            75% {
+                top: 8rem;
+            }
+
+            100% {
+                top: calc(8rem - 190px);
+            }
+        }
+    }
+</style>
+
+<!-- add on boilerplate -->
+
+
+<% if (typeof success !=='undefined' && success.length) { %>
+    <div class="alert alert-success alert-dismissible fade show col-8 offset-2" role="alert">
+
+        <%= success %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+    </div>
+    <% } %>
+
+
+        <% if (typeof error !=='undefined' && error.length) { %>
+            <div class="alert alert-danger fade show col-8 offset-2" role="alert">
+
+                <%= error %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+            </div>
+            <% } %>
