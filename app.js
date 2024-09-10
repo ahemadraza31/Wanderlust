@@ -22,8 +22,8 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/Airbnb";
-// const DB_URL = process.env.ATLASDB_URL;
+// const MONGO_URL = "mongodb://127.0.0.1:27017/Airbnb";
+const DB_URL = process.env.ATLASDB_URL;
 main()
   .then(() => {
     console.log("connected to DB");
@@ -31,8 +31,8 @@ main()
   .catch((err) => console.log(err));
 
 async function main() {
-  await mongoose.connect(MONGO_URL);
-  // await mongoose.connect(DB_URL);
+  // await mongoose.connect(MONGO_URL);
+  await mongoose.connect(DB_URL);
 }
 
 app.listen(8080, () => {
@@ -47,7 +47,7 @@ app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public/")));
 
 const store = MongoStore.create({
-  mongoUrl: MONGO_URL,
+  mongoUrl: DB_URL,
   crypto: {
     secret: process.env.SECRET,
   },
