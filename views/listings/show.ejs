@@ -112,6 +112,7 @@
                                                 </span>
                                                 <!-- <p class="card-text"><%# review.rating %> Stars</p> -->
                                             </div>
+
                                             <% if(currUser && currUser._id.equals(review.author._id)){ %>
                                                 <form
                                                     action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
