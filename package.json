@@ -1,8 +1,7 @@
 {
-  
-	"engines": {
-		"node": "18.17.1"
-	},
+  "engines": {
+    "node": "v20.11.0"
+  },
   "name": "airbnb-project",
   "version": "1.0.0",
   "main": "app.js",
