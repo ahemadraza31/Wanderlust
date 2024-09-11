@@ -19,9 +19,6 @@ const userSchema = Schema({
     url: String,
     filename: String,
   },
-  // --------google------------
-  providerId: String,
-  provider: String,
 });
 
 userSchema.plugin(passportLocalMongoose);

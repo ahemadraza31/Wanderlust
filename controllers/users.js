@@ -110,7 +110,7 @@ module.exports.deleteAccount = async (req, res, next) => {
     let { id } = req.params;
     await Listing.deleteMany({ owner: id });
     await Review.deleteMany({ author: id });
-    await User.findByIdAndRemove(id);
+    await User.findByIdAndDelete(id);
     // req.logout();
     req.flash("success", "Your account has been successfully deleted.");
     res.redirect("/listings");
