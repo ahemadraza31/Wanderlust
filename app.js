@@ -20,10 +20,11 @@ const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("./models/user.js");
 
-// const MONGO_URL = "mongodb://127.0.0.1:27017/Airbnb";
-const DB_URL = process.env.ATLASDB_URL;
+const MONGO_URL = "mongodb://127.0.0.1:27017/Airbnb";
+const DB_URL = process.env.ATLASDB_URL || MONGO_URL;
 main()
   .then(() => {
     console.log("connected to DB");
@@ -31,7 +32,6 @@ main()
   .catch((err) => console.log(err));
 
 async function main() {
-  // await mongoose.connect(MONGO_URL);
   await mongoose.connect(DB_URL);
 }
 
@@ -82,6 +82,40 @@ passport.use(new LocalStrategy(User.authenticate()));
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "/auth/google/callback",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        let user = await User.findOne({ googleId: profile.id });
+        if (!user) {
+          const email =
+            profile.emails && profile.emails.length > 0
+              ? profile.emails[0].value
+              : `${profile.id}@google.com`;
+          const fName = profile.name.givenName || profile.displayName.split(" ")[0];
+          const lName = profile.name.familyName || "";
+          const newUser = new User({
+            googleId: profile.id,
+            email: email,
+            fName: fName,
+            lName: lName,
+            username: email,
+          });
+          user = await newUser.save();
+        }
+        return done(null, user);
+      } catch (err) {
+        return done(err, false);
+      }
+    }
+  )
+);
 
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");

@@ -188,50 +188,23 @@
 }
 
 .ftr-akash {
-    font-family: 'Dancing Script', cursive !important;
     font-family: 'Poppins', sans-serif;
-    font-weight: 700;
+    font-weight: 500;
     display: flex;
     justify-content: center;
-    font-size: 1.5rem;
-    filter: drop-shadow(2px 2px 4px rgb(11, 8, 46));
-    border-top: 1px solid rgba(0, 0, 0, 0.236);
-    padding: 10px 0px 0px 0px;
+    font-size: 1rem;
+    color: #484848;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 12px 0px;
     margin-right: 5%;
+    letter-spacing: 0.5px;
 }
 
 .ftr-akash p:hover {
-    background: -webkit-linear-gradient(blue, red);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    cursor: pointer;
+    color: #000000;
+    cursor: default;
 }
 
 .ftr-akash p {
-    background: -webkit-linear-gradient(#ff0000, black);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: sheck 5s infinite linear;
-}
-
-@keyframes sheck {
-    0% {
-        transform: scale(1);
-    }
-
-    33% {
-        transform: scale(1.2);
-    }
-
-    50% {
-        transform: scale(1);
-    }
-
-    66% {
-        transform: scale(1.2);
-    }
-
-    100% {
-        transform: scale(1);
-    }
+    margin: 0;
 }

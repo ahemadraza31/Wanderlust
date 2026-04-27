@@ -3,7 +3,6 @@
 <p align="center">
   <b style="color: blue;  ">Visitor count</b>
   <br>
-  <a style="" href="https://github.com/Rakhisan">
   <img src="https://profile-counter.glitch.me/Airbnb--Project/count.svg" />
   </a>
 </p>
@@ -99,9 +98,7 @@ A heartfelt thank you to Shradha Khapra didi and AMAN DHATTARWAL bhaiya at #Apna
 
 ## Author
 
-Rakhi Singh \
-Email: rakhisingh030118@gmail.com \
-LinkedIn : https://www.linkedin.com/in/rakhisingh23/
+**Ahemad Pathan**
 
 ## Thank You
 

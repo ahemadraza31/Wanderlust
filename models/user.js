@@ -13,7 +13,9 @@ const userSchema = Schema({
   },
   lName: {
     type: String,
-    // required: true
+  },
+  googleId: {
+    type: String,
   },
   image: {
     url: String,
