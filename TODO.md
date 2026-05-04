@@ -1,10 +1,30 @@
-# Replace Mapbox with Leaflet + OpenStreetMap (100% Free)
+# Render Deployment TODO
 
-## Tasks
-- [x] 1. Update `package.json` - remove `@mapbox/mapbox-sdk`, add `node-fetch@2`
-- [x] 2. Rewrite `controllers/listings.js` - replace Mapbox geocoding with OpenStreetMap Nominatim API
-- [x] 3. Rewrite `public/js/map.js` - replace with Leaflet implementation
-- [x] 4. Update `views/layouts/boilerplate.ejs` - replace Mapbox CDN with Leaflet CDN
-- [x] 5. Update `views/listings/show.ejs` - remove Mapbox references, add Leaflet container
-- [x] 6. Install dependencies and test
+## Current Progress
+- [x] Fix dynamic PORT in app.js
+- [x] Add env-based Google OAuth callbackURL
+- [x] Add npm start script in package.json
 
+## Remaining Steps
+1. Create Render account at render.com, connect GitHub repo (ahemadraza31/Wanderlust)
+2. New Web Service > Build: auto (Node), Start: `npm start`
+3. Set env vars:
+   ```
+   ATLASDB_URL=...
+   SECRET=...
+   CLOUD_NAME=...
+   CLOUD_API_KEY=...
+   CLOUD_API_SECRET=...
+   GOOGLE_CLIENT_ID=...
+   GOOGLE_CLIENT_SECRET=...
+   CALLBACK_URL=https://your-app.onrender.com/auth/google/callback
+   NODE_ENV=production
+   ```
+4. Deploy - URL issued: https://your-app.onrender.com
+5. Update Google OAuth console with prod CALLBACK_URL
+6. Test listings/auth/maps/uploads
+
+## Notes
+- Leaflet maps free, no token.
+- MongoDB Atlas required (no local).
+- Free tier sleeps after inactivity.
