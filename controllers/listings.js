@@ -4,18 +4,18 @@ const fetch = require("node-fetch");
 // Default geometry fallback when geocoding is unavailable
 const defaultGeometry = {
   type: "Point",
-  coordinates: [77.209, 28.6139], // Default: New Delhi, India
+  coordinates: [20.5937, 78.9629], // Fallback: Central India
 };
 
 // Free geocoding using OpenStreetMap Nominatim (no API key required)
 async function getGeocoding(location, country) {
-  const query = encodeURIComponent(`${location}, ${country}`);
+const query = encodeURIComponent(`${location}, ${country}, India`);
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`;
 
   try {
     const response = await fetch(url, {
       headers: {
-        "User-Agent": "AirbnbProject/1.0 (your-email@example.com)",
+"User-Agent": "AirbnbClone/1.0 (ahemadrajapathan@example.com)",
       },
     });
     const data = await response.json();
