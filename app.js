@@ -22,6 +22,8 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
+
+if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
 const User = require("./models/user.js");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/Airbnb";
