@@ -10,7 +10,9 @@
     margin-bottom: 10px;
     text-align: center;
     height: 2.3rem;
-    width: 5.5rem;
+    min-width: 5.5rem;
+    width: auto;
+    padding: 0 1.2rem;
     border: 1px solid grey;
     border-radius: 20px;
     outline: none;

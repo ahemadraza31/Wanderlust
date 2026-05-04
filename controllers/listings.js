@@ -1,18 +1,35 @@
 const Listing = require("../models/listing");
-const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
-const mapToken = process.env.MAP_TOKEN;
-
-// Only initialize geocoding client if a valid token is provided
-let geocodingClient;
-if (mapToken && mapToken !== "your_mapbox_token" && mapToken.startsWith("pk.")) {
-  geocodingClient = mbxGeocoding({ accessToken: mapToken });
-}
+const fetch = require("node-fetch");
 
 // Default geometry fallback when geocoding is unavailable
 const defaultGeometry = {
   type: "Point",
   coordinates: [77.209, 28.6139], // Default: New Delhi, India
 };
+
+// Free geocoding using OpenStreetMap Nominatim (no API key required)
+async function getGeocoding(location, country) {
+  const query = encodeURIComponent(`${location}, ${country}`);
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`;
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "AirbnbProject/1.0 (your-email@example.com)",
+      },
+    });
+    const data = await response.json();
+    if (data && data.length > 0) {
+      return {
+        type: "Point",
+        coordinates: [parseFloat(data[0].lon), parseFloat(data[0].lat)],
+      };
+    }
+  } catch (err) {
+    console.log("Geocoding error:", err.message);
+  }
+  return defaultGeometry;
+}
 
 module.exports.index = async (req, res, next) => {
   let allListing = await Listing.find().sort({ _id: -1 });
@@ -24,20 +41,10 @@ module.exports.renderNewForm = (req, res) => {
 };
 
 module.exports.createListing = async (req, res, next) => {
-  let geometry = defaultGeometry;
-  if (geocodingClient) {
-    try {
-      let response = await geocodingClient
-        .forwardGeocode({
-          query: `${req.body.listing.location},${req.body.listing.country}`,
-          limit: 1,
-        })
-        .send();
-      geometry = response.body.features[0].geometry;
-    } catch (err) {
-      console.log("Geocoding error:", err.message);
-    }
-  }
+  let geometry = await getGeocoding(
+    req.body.listing.location,
+    req.body.listing.country
+  );
   let url = req.file.path;
   let filename = req.file.filename;
   const newListing = new Listing(req.body.listing);
@@ -80,19 +87,15 @@ module.exports.updateListing = async (req, res, next) => {
   let updateListing = req.body.listing;
   let listing = await Listing.findByIdAndUpdate(id, updateListing);
 
-  if (geocodingClient) {
-    try {
-      let response = await geocodingClient
-        .forwardGeocode({
-          query: `${req.body.listing.location},${req.body.listing.country}`,
-          limit: 1,
-        })
-        .send();
-      listing.geometry = response.body.features[0].geometry;
-      await listing.save();
-    } catch (err) {
-      console.log("Geocoding error:", err.message);
-    }
+  try {
+    let geometry = await getGeocoding(
+      req.body.listing.location,
+      req.body.listing.country
+    );
+    listing.geometry = geometry;
+    await listing.save();
+  } catch (err) {
+    console.log("Geocoding error:", err.message);
   }
 
   if (typeof req.file != "undefined") {
