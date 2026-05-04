@@ -1,30 +1,17 @@
-# Render Deployment TODO
+# Project TODO - Render Deployment + Facebook Auth
 
-## Current Progress
-- [x] Fix dynamic PORT in app.js
-- [x] Add env-based Google OAuth callbackURL
-- [x] Add npm start script in package.json
+## Deployment Progress
+- [x] Dynamic PORT, callback env, npm start
+- [ ] Deploy to Render & test
 
-## Remaining Steps
-1. Create Render account at render.com, connect GitHub repo (ahemadraza31/Wanderlust)
-2. New Web Service > Build: auto (Node), Start: `npm start`
-3. Set env vars:
-   ```
-   ATLASDB_URL=...
-   SECRET=...
-   CLOUD_NAME=...
-   CLOUD_API_KEY=...
-   CLOUD_API_SECRET=...
-   GOOGLE_CLIENT_ID=...
-   GOOGLE_CLIENT_SECRET=...
-   CALLBACK_URL=https://your-app.onrender.com/auth/google/callback
-   NODE_ENV=production
-   ```
-4. Deploy - URL issued: https://your-app.onrender.com
-5. Update Google OAuth console with prod CALLBACK_URL
-6. Test listings/auth/maps/uploads
+## Facebook Auth Progress
+- [ ] Add deps/strategy/routes/button/user field
+- [ ] Update TODO after complete
 
-## Notes
-- Leaflet maps free, no token.
-- MongoDB Atlas required (no local).
-- Free tier sleeps after inactivity.
+## Env Vars for Facebook (add to Render)
+```
+FACEBOOK_APP_ID=your_app_id
+FACEBOOK_APP_SECRET=your_secret
+FACEBOOK_CALLBACK_URL=https://yourapp.onrender.com/auth/facebook/callback
+```
+Get from developers.facebook.com > App > Facebook Login > Valid OAuth URIs: above URL + http://localhost:8080/auth/facebook/callback

@@ -21,6 +21,7 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const FacebookStrategy = require("passport-facebook").Strategy;
 const User = require("./models/user.js");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/Airbnb";
@@ -103,6 +104,37 @@ passport.use(
           const lName = profile.name.familyName || "";
           const newUser = new User({
             googleId: profile.id,
+            email: email,
+            fName: fName,
+            lName: lName,
+            username: email,
+          });
+          user = await newUser.save();
+        }
+        return done(null, user);
+      } catch (err) {
+        return done(err, false);
+      }
+    }
+  )
+);
+
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
+      callbackURL: process.env.FACEBOOK_CALLBACK_URL || "/auth/facebook/callback",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        let user = await User.findOne({ facebookId: profile.id });
+        if (!user) {
+          const email = profile.emails && profile.emails.length > 0 ? profile.emails[0].value : `${profile.id}@facebook.com`;
+          const fName = profile.name.givenName || profile.displayName.split(" ")[0];
+          const lName = profile.name.familyName || "";
+          const newUser = new User({
+            facebookId: profile.id,
             email: email,
             fName: fName,
             lName: lName,

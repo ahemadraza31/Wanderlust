@@ -18,7 +18,7 @@ const multer = require("multer"); //install multer package in npm || multipart/f
 const { storage } = require("../cloudConfig.js");
 const upload = multer({ storage });
 
-// Google OAuth Routes-----------------------
+// OAuth Routes-----------------------
 router.get(
   "/auth/google",
   passport.authenticate("google", {
@@ -37,6 +37,26 @@ router.get(
     res.redirect("/listings");
   }
 );
+
+router.get(
+  "/auth/facebook",
+  passport.authenticate("facebook", {
+    scope: ["profile", "email"],
+  })
+);
+
+router.get(
+  "/auth/facebook/callback",
+  passport.authenticate("facebook", {
+    failureRedirect: "/login",
+    failureFlash: true,
+  }),
+  (req, res) => {
+    req.flash("success", "Welcome back to Wanderlust!");
+    res.redirect("/listings");
+  }
+);
+
 
 // Router.route-----------------------
 router

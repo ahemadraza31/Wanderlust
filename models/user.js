@@ -17,6 +17,9 @@ const userSchema = Schema({
   googleId: {
     type: String,
   },
+  facebookId: {
+    type: String,
+  },
   image: {
     url: String,
     filename: String,
@@ -25,4 +28,5 @@ const userSchema = Schema({
 
 userSchema.plugin(passportLocalMongoose);
 
+// const upload = multer({ dest: 'uploads/' })  //uploads folder me save karega
 module.exports = mongoose.model("User", userSchema);
