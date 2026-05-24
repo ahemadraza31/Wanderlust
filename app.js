@@ -114,12 +114,19 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+let googleCallbackURL = process.env.CALLBACK_URL || "/auth/google/callback";
+if (googleCallbackURL.startsWith("http://") || googleCallbackURL.startsWith("https://")) {
+  if (!googleCallbackURL.endsWith("/auth/google/callback")) {
+    googleCallbackURL = googleCallbackURL.replace(/\/$/, "") + "/auth/google/callback";
+  }
+}
+
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.CALLBACK_URL || "/auth/google/callback",
+      callbackURL: googleCallbackURL,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -149,12 +156,19 @@ passport.use(
 );
 
 if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
+  let facebookCallbackURL = process.env.FACEBOOK_CALLBACK_URL || "/auth/facebook/callback";
+  if (facebookCallbackURL.startsWith("http://") || facebookCallbackURL.startsWith("https://")) {
+    if (!facebookCallbackURL.endsWith("/auth/facebook/callback")) {
+      facebookCallbackURL = facebookCallbackURL.replace(/\/$/, "") + "/auth/facebook/callback";
+    }
+  }
+
   passport.use(
     new FacebookStrategy(
       {
         clientID: process.env.FACEBOOK_APP_ID,
         clientSecret: process.env.FACEBOOK_APP_SECRET,
-        callbackURL: process.env.FACEBOOK_CALLBACK_URL || "/auth/facebook/callback",
+        callbackURL: facebookCallbackURL,
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
