@@ -25,7 +25,26 @@ const User = require("./models/user.js");
 
 const FacebookStrategy = require("passport-facebook").Strategy;
 
-const DB_URL = process.env.ATLASDB_URL || process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/Airbnb";
+let DB_URL = process.env.ATLASDB_URL || process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/Airbnb";
+
+if (typeof DB_URL === "string") {
+  DB_URL = DB_URL.trim().replace(/^["'](.*)["']$/, "$1").trim();
+}
+
+const getMaskedUrl = (url) => {
+  if (!url) return "empty";
+  return url.replace(/(:\/\/)([^:]+):([^@]+)(@)/, (m, p1, p2, p3, p4) => {
+    return p1 + p2.slice(0, 3) + "***:****" + p4;
+  });
+};
+
+console.log("Resolved database URI:", getMaskedUrl(DB_URL));
+
+if (!DB_URL.startsWith("mongodb://") && !DB_URL.startsWith("mongodb+srv://")) {
+  console.warn("WARNING: Resolved DB_URL does not start with a valid MongoDB scheme. Falling back to local database URI.");
+  DB_URL = "mongodb://127.0.0.1:27017/Airbnb";
+}
+
 main()
   .then(() => {
     console.log("connected to DB");
