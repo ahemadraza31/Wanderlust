@@ -33,6 +33,9 @@ main()
   .catch((err) => console.log(err));
 
 async function main() {
+  if (mongoose.connection.readyState >= 1) {
+    return;
+  }
   await mongoose.connect(DB_URL, {
     family: 4,
   });
