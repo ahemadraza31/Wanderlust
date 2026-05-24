@@ -33,7 +33,9 @@ main()
   .catch((err) => console.log(err));
 
 async function main() {
-  await mongoose.connect(DB_URL);
+  await mongoose.connect(DB_URL, {
+    autoSelectFamily: false,
+  });
 }
 
 const PORT = process.env.PORT || 8080;
