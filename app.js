@@ -45,6 +45,11 @@ if (!DB_URL.startsWith("mongodb://") && !DB_URL.startsWith("mongodb+srv://")) {
   DB_URL = "mongodb://127.0.0.1:27017/Airbnb";
 }
 
+if ((process.env.NODE_ENV === "production" || process.env.VERCEL) && 
+    (DB_URL.includes("127.0.0.1") || DB_URL.includes("localhost"))) {
+  throw new Error("Missing MongoDB Environment Variable: The application is running in production/Vercel, but no ATLASDB_URL or MONGODB_URI environment variable was found. Please set your MongoDB Atlas connection string (ATLASDB_URL) in the Vercel dashboard environment variables.");
+}
+
 main()
   .then(() => {
     console.log("connected to DB");
