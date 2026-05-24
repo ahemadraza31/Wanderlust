@@ -9,9 +9,7 @@
             }
         }
     </style>
-    <script>
-        const listing = JSON.parse(`<%- JSON.stringify(listing) %>`);
-    </script>
+<script id="listing-data" type="application/json"><%- JSON.stringify(listing) %></script>
     <div class="row mt-3 show-main">
         <div class="show-body">
             <div class="col-8 offset-2  ">
@@ -141,7 +139,7 @@
                         70% { box-shadow: 0 0 0 15px rgba(255, 75, 75, 0); }
                         100% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0); }
                     }
-                    #map { height: 400px; width: 100%; border-radius: 1rem; }
+#map { height: 400px; width: 100%; border-radius: 1rem; min-height: 400px; }
                 </style>
                 <div class="col-8 offset-2 mapImg">
                     <p><b>Where you'll be &nbsp;<i class="fa-solid fa-location-crosshairs"></i></p></b>
@@ -152,10 +150,13 @@
                             <div class="icon icon-min" onclick="zoomout()"><i
                                     class="fa-solid fa-magnifying-glass-minus"></i></div>
                         </div>
-                        <div class="akash"><a href="https://github.com/Rakhisan/">AD GitHub</a></div>
+
                     </div>
                 </div>
         </div>
     </div>
-    <script src="/js/map.js"></script>
+<script>
+  const mapToken = "<%= mapToken %>";
+</script>
+<script src="/js/mapbox-complete.js"></script>
     <script src="/js/delete-confirm.js"></script>

@@ -1,25 +1,14 @@
 const Listing = require("../models/listing");
-const fetch = require("node-fetch");
 
-// Default geometry fallback when geocoding is unavailable
-const defaultGeometry = {
-  type: "Point",
-  coordinates: [20.5937, 78.9629], // Fallback: Central India
-};
-
-// Free geocoding using OpenStreetMap Nominatim (no API key required)
-async function getGeocoding(location, country) {
-const query = encodeURIComponent(`${location}, ${country}, India`);
+// OpenStreetMap Nominatim geocoding (no token needed)
+async function getMapboxCoords(location) {
+  const query = encodeURIComponent(location);
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`;
-
   try {
-    const response = await fetch(url, {
-      headers: {
-"User-Agent": "AirbnbClone/1.0 (ahemadrajapathan@example.com)",
-      },
-    });
+    const response = await fetch(url, { headers: { "User-Agent": "AirbnbProject/1.0" } });
     const data = await response.json();
     if (data && data.length > 0) {
+      console.log('Geocoding successful for:', location, 'Coords:', data[0].lon, data[0].lat);
       return {
         type: "Point",
         coordinates: [parseFloat(data[0].lon), parseFloat(data[0].lat)],
@@ -28,7 +17,8 @@ const query = encodeURIComponent(`${location}, ${country}, India`);
   } catch (err) {
     console.log("Geocoding error:", err.message);
   }
-  return defaultGeometry;
+  console.log('Using fallback Mumbai coords for:', location);
+  return { type: "Point", coordinates: [72.8777, 19.0760] };
 }
 
 module.exports.index = async (req, res, next) => {
@@ -41,10 +31,7 @@ module.exports.renderNewForm = (req, res) => {
 };
 
 module.exports.createListing = async (req, res, next) => {
-  let geometry = await getGeocoding(
-    req.body.listing.location,
-    req.body.listing.country
-  );
+  const geometry = await getMapboxCoords(req.body.listing.location + ', ' + req.body.listing.country);
   let url = req.file.path;
   let filename = req.file.filename;
   const newListing = new Listing(req.body.listing);
@@ -59,12 +46,17 @@ module.exports.createListing = async (req, res, next) => {
 module.exports.showListing = async (req, res, next) => {
   let { id } = req.params;
   let listing = await Listing.findById(id)
-    .populate({ path: "reviews", populate: { path: "author" } })
+    .populate({ 
+      path: "reviews", 
+      populate: { 
+        path: "author" 
+      } 
+    })
     .populate("owner");
 
   if (!listing) {
     req.flash("error", "Listing you requested for does not exist!");
-    res.redirect("/listings");
+    return res.redirect("/listings");
   }
   console.log(listing);
   res.render("listings/show.ejs", { listing });
@@ -77,7 +69,7 @@ module.exports.renderEditForm = async (req, res, next) => {
   originalImage = originalImage.replace("/upload", "/upload/w_200,h_150");
   if (!listing) {
     req.flash("error", "Listing you requested for does not exist!");
-    res.redirect("/listings");
+    return res.redirect("/listings");
   }
   res.render("listings/edit.ejs", { listing, originalImage });
 };
@@ -87,16 +79,9 @@ module.exports.updateListing = async (req, res, next) => {
   let updateListing = req.body.listing;
   let listing = await Listing.findByIdAndUpdate(id, updateListing);
 
-  try {
-    let geometry = await getGeocoding(
-      req.body.listing.location,
-      req.body.listing.country
-    );
-    listing.geometry = geometry;
-    await listing.save();
-  } catch (err) {
-    console.log("Geocoding error:", err.message);
-  }
+  const geometry = await getMapboxCoords(req.body.listing.location + ', ' + req.body.listing.country);
+  listing.geometry = geometry;
+  await listing.save();
 
   if (typeof req.file != "undefined") {
     let url = req.file.path;
@@ -136,15 +121,13 @@ module.exports.filterbtn = (req, res, next) => {
 
 module.exports.search = async (req, res) => {
   console.log(req.query.q);
-  let input = req.query.q.trim().replace(/\s+/g, " "); // remove start and end space and middle space remove and middle add one space------
+  let input = req.query.q.trim().replace(/\s+/g, " ");
   console.log(input);
   if (input == "" || input == " ") {
-    //search value empty
     req.flash("error", "Search value empty !!!");
     res.redirect("/listings");
   }
 
-  // convert every word 1st latter capital and other small---------------
   let data = input.split("");
   let element = "";
   let flag = false;
@@ -187,7 +170,7 @@ module.exports.search = async (req, res) => {
     }
   }
   if (allListing.length == 0) {
-    let allListing = await Listing.find({
+    allListing = await Listing.find({
       location: { $regex: element, $options: "i" },
     }).sort({ _id: -1 });
     if (allListing.length != 0) {
@@ -196,8 +179,8 @@ module.exports.search = async (req, res) => {
       return;
     }
   }
-  const intValue = parseInt(element, 10); // 10 for decimal return - int ya NaN
-  const intDec = Number.isInteger(intValue); // check intValue is Number & Not Number return - true ya false
+  const intValue = parseInt(element, 10);
+  const intDec = Number.isInteger(intValue);
 
   if (allListing.length == 0 && intDec) {
     allListing = await Listing.find({ price: { $lte: element } }).sort({
@@ -214,3 +197,4 @@ module.exports.search = async (req, res) => {
     res.redirect("/listings");
   }
 };
+

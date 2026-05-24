@@ -23,13 +23,9 @@ const LocalStrategy = require("passport-local");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("./models/user.js");
 
-let FacebookStrategy;
-if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
-  FacebookStrategy = require("passport-facebook").Strategy;
-}
+const FacebookStrategy = require("passport-facebook").Strategy;
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/Airbnb";
-const DB_URL = process.env.ATLASDB_URL || MONGO_URL;
+const DB_URL = process.env.ATLASDB_URL || process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/Airbnb";
 main()
   .then(() => {
     console.log("connected to DB");
@@ -160,19 +156,7 @@ app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user;
-  console.log("<<========================START========================>>");
-  console.log(`rawheaders:- ${req.get("rawHeaders")}`);
-  console.log(`rawheaders:- ${req.rawHeaders.slice(";").join("     ")}`);
-  console.log(`Country name:- ${req.get("cf-ipcountry")}`);
-  console.log(`Referar name:- ${req.get("referer")}`);
-  console.log(`Use site name:- ${req.get("sec-ch-ua")}`);
-  console.log(`Mobile name:- ${req.get("sec-ch-ua-mobile")}`);
-  console.log(`Platform name:- ${req.get("sec-ch-ua-platform")}`);
-  console.log(`Client IP address is:- ${req.get("true-client-ip")}`);
-  console.log(`Connecting IP address is:- ${req.get("cf-connecting-ip")}`);
-  console.log(`Forwarded IP address is:- ${req.get("x-forwarded-for")}`);
-  console.log(`User detail:- ${res.locals.currUser}`);
-  console.log("<<========================END========================>>");
+  res.locals.mapToken = process.env.MAPBOX_TOKEN;
   next();
 });
 

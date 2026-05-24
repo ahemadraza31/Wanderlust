@@ -1,11 +1,12 @@
-/* loder-------------- */
-#loder{
-    position: fixed;
-    z-index: 250;
-    height: 50x;
-    width: 50px;
-    top: 30vh;
-    left: calc(50% - 25px);
+/* loader-------------- */
+#loader{
+    width: 6rem;
+    height: 6rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
 }
 .container form button:disabled{
     background-color: rgba(0, 255, 255, 0.709) !important;
@@ -13,7 +14,7 @@
     cursor: not-allowed !important;
 }
 @media (min-width: 767px) {
-    #loder{
+    #loader{
         height: 80px;
         width: 80px;
         left: calc(50% - 40px);

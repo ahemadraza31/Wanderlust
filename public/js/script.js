@@ -10,7 +10,7 @@
           event.stopPropagation();
           console.log("script.js = ", event);
         } else {
-          document.querySelector("#loder").style.display = "inline";
+          document.querySelector("#loader").style.display = "inline";
           document.querySelector(".pageblur").style.opacity = ".5";
           event.submitter.disabled = true;
           event.submitter.innerHTML = "Loading..";

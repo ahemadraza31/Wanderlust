@@ -25,4 +25,5 @@ module.exports.userSchema = Joi.object({
   username: Joi.string().required(),
   email: Joi.string().required().email(),
   password: Joi.string().min(8),
+  inlineFormCheck: Joi.any(),
 });
