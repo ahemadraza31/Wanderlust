@@ -17,7 +17,8 @@ module.exports.allListingDestroy = async (req, res, next) => {
 };
 module.exports.profileDestroyListing = async (req, res, next) => {
   let { id } = req.params;
-  let deleteListing = await Listing.findByIdAndDelete(id);
+  // Use findOneAndDelete so the post-hook cascade fires and removes associated reviews
+  let deleteListing = await Listing.findOneAndDelete({ _id: id });
   console.log(deleteListing);
   req.flash("success", "Listing Deleted!");
   console.log("delete");

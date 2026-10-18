@@ -111,9 +111,12 @@ module.exports.deleteAccount = async (req, res, next) => {
     await Listing.deleteMany({ owner: id });
     await Review.deleteMany({ author: id });
     await User.findByIdAndDelete(id);
-    // req.logout();
-    req.flash("success", "Your account has been successfully deleted.");
-    res.redirect("/listings");
+    // Destroy session after account deletion so no stale auth persists
+    req.logout((err) => {
+      if (err) console.error("Logout error after account delete:", err.message);
+      req.flash("success", "Your account has been successfully deleted.");
+      res.redirect("/listings");
+    });
   } catch (e) {
     req.flash("error", e.message);
     res.redirect("/listings");

@@ -169,14 +169,15 @@ if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
         clientID: process.env.FACEBOOK_APP_ID,
         clientSecret: process.env.FACEBOOK_APP_SECRET,
         callbackURL: facebookCallbackURL,
+        profileFields: ["id", "emails", "name"], // explicitly request these fields
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
           let user = await User.findOne({ facebookId: profile.id });
           if (!user) {
             const email = profile.emails && profile.emails.length > 0 ? profile.emails[0].value : `${profile.id}@facebook.com`;
-            const fName = profile.name.givenName || profile.displayName.split(" ")[0];
-            const lName = profile.name.familyName || "";
+            const fName = (profile.name && profile.name.givenName) || (profile.displayName ? profile.displayName.split(" ")[0] : "FBUser");
+            const lName = (profile.name && profile.name.familyName) || "";
             const newUser = new User({
               facebookId: profile.id,
               email: email,
@@ -193,6 +194,9 @@ if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
       }
     )
   );
+  console.log("Facebook OAuth strategy registered.");
+} else {
+  console.warn("Facebook OAuth not configured (FACEBOOK_APP_ID / FACEBOOK_APP_SECRET missing).");
 }
 
 app.use((req, res, next) => {
@@ -200,6 +204,7 @@ app.use((req, res, next) => {
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user;
   res.locals.mapToken = process.env.MAPBOX_TOKEN;
+  res.locals.facebookEnabled = !!(process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET);
   next();
 });
 

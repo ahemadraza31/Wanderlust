@@ -38,24 +38,34 @@ router.get(
   }
 );
 
-router.get(
-  "/auth/facebook",
-  passport.authenticate("facebook", {
-    scope: ["profile", "email"],
-  })
-);
+// Facebook OAuth routes – only register when the strategy is configured
+if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
+  router.get(
+    "/auth/facebook",
+    passport.authenticate("facebook", {
+      scope: ["email"], // 'profile' is not a valid FB permission; email requires App Review
+    })
+  );
 
-router.get(
-  "/auth/facebook/callback",
-  passport.authenticate("facebook", {
-    failureRedirect: "/login",
-    failureFlash: true,
-  }),
-  (req, res) => {
-    req.flash("success", "Welcome back to Wanderlust!");
-    res.redirect("/listings");
-  }
-);
+  router.get(
+    "/auth/facebook/callback",
+    passport.authenticate("facebook", {
+      failureRedirect: "/login",
+      failureFlash: true,
+    }),
+    (req, res) => {
+      req.flash("success", "Welcome back to Wanderlust!");
+      res.redirect("/listings");
+    }
+  );
+} else {
+  // Graceful fallback when FB credentials are not set
+  router.get("/auth/facebook", (req, res) => {
+    req.flash("error", "Facebook login is not configured on this server.");
+    res.redirect("/login");
+  });
+  router.get("/auth/facebook/callback", (req, res) => res.redirect("/login"));
+}
 
 
 // Router.route-----------------------
