@@ -1,6 +1,6 @@
 {
   "engines": {
-    "node": "20.11.0"
+    "node": "26.x"
   },
   "name": "airbnb-project",
   "version": "1.0.0",
@@ -10,7 +10,7 @@
     "dev": "nodemon app.js"
   },
   "keywords": [],
-  "author": "Rakhi singh",
+  "author": "Ahemad raja Pathan",
   "license": "ISC",
   "description": "",
   "dependencies": {

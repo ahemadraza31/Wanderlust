@@ -66,9 +66,11 @@ async function main() {
 }
 
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`server is listening to port ${PORT}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`server is listening to port ${PORT}`);
+  });
+}
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -220,3 +222,5 @@ app.use((err, req, res, next) => {
   let { statusCode = 500, message = "Something went wrong!" } = err;
   res.status(statusCode).render("listings/error.ejs", { message });
 });
+
+module.exports = app;
